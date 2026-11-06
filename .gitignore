@@ -1,1 +1,15 @@
-node_modules
+data/*
+!data/splits/
+!data/README.md
+artifacts/
+chest_xray_cnn_splits/
+saved_models/
+checkpoints/
+*.keras
+*.h5
+*.pth
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+.venv/
+.DS_Store
