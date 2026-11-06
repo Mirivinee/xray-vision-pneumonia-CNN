@@ -1,6 +1,6 @@
 # Class-imbalance experiments
 
-The reusable TensorFlow/Keras helpers are in [`imbalance.ipynb`](../imbalance.ipynb).
+The reusable TensorFlow/Keras helpers are in [`00_imbalance_utilities.ipynb`](../notebooks/02_baseline_cnn/00_imbalance_utilities.ipynb).
 Run its import and helper-function cells before using the examples below, or copy
 those cells into the CNN teammate's notebook. They operate on datasets of
 `(images, sparse_integer_labels)` with class IDs
@@ -33,7 +33,7 @@ effective class emphasis and should be a separately documented experiment.
 
 The prepared data is expected at
 `chest_xray_cnn_splits/{train,val,test}/{NORMAL,PNEUMONIA}/`. This matches the
-folder layout produced by `chest_xray_train_val_test_split.ipynb`.
+folder layout produced by [`01_chest_xray_train_val_test_split.ipynb`](../notebooks/01_data_preparation/01_chest_xray_train_val_test_split.ipynb).
 
 ```python
 from pathlib import Path
@@ -77,7 +77,7 @@ test_ds = tf.keras.utils.image_dataset_from_directory(
 assert train_ds.class_names == CLASS_NAMES
 ```
 
-Run the imports and helper-function cells from `imbalance.ipynb` in this
+Run the imports and helper-function cells from `00_imbalance_utilities.ipynb` in this
 notebook's kernel before running the examples below.
 
 `image_dataset_from_directory` returns finite batches with integer labels by
@@ -153,11 +153,11 @@ same preprocessing expected by the model.
 
 ## CNN integration template
 
-> **Model-specific template — not runnable until the CNN teammate supplies the
-> model, output shape, loss, optimizer, and training configuration.** There is
-> currently no CNN implementation or training loop in this repository. The
-> values below are placeholders, not recommendations for the model's output or
-> loss.
+> **Model-specific template — illustrative only.** The repository now includes
+> CNNs in notebooks, but does not expose a shared model-building API. The
+> placeholders below are not recommendations for output shape, loss, optimizer,
+> or training configuration. See the baseline experiment notebooks for their
+> concrete models and loops.
 
 ```python
 # TEMPLATE ONLY: replace all placeholders with the CNN implementation's
@@ -193,8 +193,8 @@ history = model.fit(
 test_metrics = model.evaluate(test_ds)  # evaluate the held-out test split once
 ```
 
-The model must accept the prepared image dimensions and integer labels, or the
-CNN teammate must explicitly adapt the model/loss/label handling. In particular,
+The selected model must accept the prepared image dimensions and integer labels,
+or its author must explicitly adapt the model/loss/label handling. In particular,
 the appropriate output layer and loss cannot be selected until the model's
 output shape is known.
 

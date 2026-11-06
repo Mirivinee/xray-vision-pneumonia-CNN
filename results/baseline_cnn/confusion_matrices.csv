@@ -1,0 +1,7 @@
+experiment,true_label,predicted_normal,predicted_pneumonia
+class_weighted,NORMAL,125,106
+class_weighted,PNEUMONIA,34,353
+oversampling,NORMAL,0,231
+oversampling,PNEUMONIA,0,387
+augmentation,NORMAL,67,164
+augmentation,PNEUMONIA,9,378

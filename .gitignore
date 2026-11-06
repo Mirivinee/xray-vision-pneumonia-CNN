@@ -1,1 +1,27 @@
 node_modules
+.pytest_cache/
+__pycache__/
+*.py[cod]
+
+# Prepared medical images are local data, never repository content.
+data/chest_xray_cnn_splits/
+
+# Transfer checkpoints are generated locally and may be large.
+models/frozen/*.keras
+models/fine_tuned/*.keras
+models/baseline/*_run*.keras
+
+# Python generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Local environments and secrets
+.venv/
+venv/
+.env
+.env.*
+
+# Local audit material
+audit_originals/

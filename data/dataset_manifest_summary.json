@@ -1,0 +1,49 @@
+{
+  "dataset": "paultimothymooney/chest-xray-pneumonia",
+  "manifest": "data/dataset_manifest.csv",
+  "manifest_sha256": "778aabedfc8f9d668930861bd6ca7bb163f4167e06c458301147b27922b7f743",
+  "class_names": [
+    "NORMAL",
+    "PNEUMONIA"
+  ],
+  "class_mapping": {
+    "NORMAL": 0,
+    "PNEUMONIA": 1
+  },
+  "split_seed": 42,
+  "split_method": "Sorted source paths; stratified 10% validation split from source train+val; source test retained; exact duplicates checked but never deleted.",
+  "counts": {
+    "train": {
+      "NORMAL": 1213,
+      "PNEUMONIA": 3472
+    },
+    "val": {
+      "NORMAL": 135,
+      "PNEUMONIA": 386
+    },
+    "test": {
+      "NORMAL": 231,
+      "PNEUMONIA": 387
+    }
+  },
+  "total_images": 5824,
+  "unique_sha256": 5824,
+  "duplicate_groups": 0,
+  "unreadable_images": 0,
+  "image_modes": {
+    "L": 5541,
+    "RGB": 283
+  },
+  "dimensions": {
+    "width_min": 384,
+    "width_max": 2916,
+    "height_min": 127,
+    "height_max": 2713
+  },
+  "source_image_pixel_data_in_repository": false,
+  "splits": [
+    "train",
+    "val",
+    "test"
+  ]
+}
