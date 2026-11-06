@@ -1,6 +1,10 @@
-kagglehub
-scikit-learn
-matplotlib
-Pillow
-tensorflow
-ipykernel
+tensorflow>=2.16
+numpy>=1.26
+pandas>=2.0
+scikit-learn>=1.3
+scipy>=1.11
+matplotlib>=3.7
+pillow>=10.0
+tqdm>=4.66
+kagglehub>=0.3
+pytest>=8.0
