@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import json
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 import matplotlib.pyplot as plt
@@ -106,6 +107,22 @@ def save_training_history(history: Any, output_path: Path) -> None:
             writer.writerow(
                 {"epoch": epoch + 1, **{key: history.history[key][epoch] for key in keys}}
             )
+
+
+def load_training_history(input_path: Path) -> Any:
+    """Restore a Keras-like history object from a previously saved CSV."""
+    with input_path.open(newline="", encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    if not rows or "epoch" not in rows[0]:
+        raise ValueError(f"Training history is missing or malformed: {input_path}")
+    keys = [key for key in rows[0] if key != "epoch"]
+    if not keys:
+        raise ValueError(f"Training history has no metrics: {input_path}")
+    epochs = [int(row["epoch"]) for row in rows]
+    if epochs != list(range(1, len(rows) + 1)):
+        raise ValueError(f"Training history epochs are not contiguous: {input_path}")
+    history = {key: [float(row[key]) for row in rows] for key in keys}
+    return SimpleNamespace(history=history, epoch=[epoch - 1 for epoch in epochs])
 
 
 def save_evaluation_artifacts(

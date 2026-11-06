@@ -13,6 +13,9 @@ from typing import Any
 import numpy as np
 import tensorflow as tf
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
+
 from src.evaluation.binary_metrics import (
     calculate_binary_metrics,
     save_evaluation_artifacts,
@@ -21,7 +24,6 @@ from src.evaluation.binary_metrics import (
 from src.evaluation.compare_experiments import write_comparison
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RUN_ID = "seed42_run01"
 TARGET_SENSITIVITY = 0.90
 IMAGE_SIZE = (224, 224)
@@ -218,8 +220,17 @@ def evaluate_run(run_id: str, split_dir: Path | None = None) -> list[dict[str, A
     selection_path = PROJECT_ROOT / "results" / "metrics" / f"model_selection_{run_id}.json"
     selection_path.parent.mkdir(parents=True, exist_ok=True)
     if selection_path.exists():
-        raise FileExistsError(f"Refusing to overwrite model-selection results: {selection_path}")
-    selection_path.write_text(json.dumps(selection_record, indent=2) + "\n", encoding="utf-8")
+        existing_selection = json.loads(selection_path.read_text(encoding="utf-8"))
+        if (
+            existing_selection.get("run_id") != run_id
+            or existing_selection.get("manifest_sha256") != manifest_sha256
+            or existing_selection.get("selected_model") != selected["model"]
+        ):
+            raise ValueError(f"Existing model-selection output conflicts with this run: {selection_path}")
+    else:
+        selection_path.write_text(
+            json.dumps(selection_record, indent=2) + "\n", encoding="utf-8"
+        )
     print(f"Validation-only model selection: {selected['model']}")
     print("All validation thresholds and model selection are fixed; beginning held-out test evaluation.")
 
@@ -248,6 +259,18 @@ def evaluate_run(run_id: str, split_dir: Path | None = None) -> list[dict[str, A
                 "Baseline_Augmentation": "augmentation",
             }[name]
             output_dir = PROJECT_ROOT / "results" / "baseline_cnn" / run_id / slug
+        metrics_path = output_dir / "metrics.json"
+        if metrics_path.exists():
+            record = json.loads(metrics_path.read_text(encoding="utf-8"))
+            if (
+                record.get("model") != name
+                or record.get("run_id") != run_id
+                or record.get("manifest_sha256") != manifest_sha256
+            ):
+                raise ValueError(f"Existing metrics conflict with this run: {metrics_path}")
+            results.append(record)
+            print(f"Reusing previously verified test metrics: {metrics_path}")
+            continue
         record, _ = save_evaluation_artifacts(
             entry["validation_labels"],
             entry["validation_scores"],
@@ -268,7 +291,21 @@ def evaluate_run(run_id: str, split_dir: Path | None = None) -> list[dict[str, A
             f"specificity={record['specificity']:.4f}"
         )
 
-    comparison_paths = write_comparison(run_id)
+    comparison_paths = (
+        PROJECT_ROOT / "results" / "metrics" / f"model_comparison_{run_id}.csv",
+        PROJECT_ROOT / "results" / "metrics" / f"model_comparison_{run_id}.md",
+        PROJECT_ROOT / "results" / "plots" / f"model_comparison_{run_id}.png",
+    )
+    existing_comparison = [path.exists() for path in comparison_paths]
+    if all(existing_comparison):
+        pass
+    elif any(existing_comparison):
+        raise FileExistsError(
+            "Incomplete comparison outputs exist; refusing to overwrite: "
+            + ", ".join(str(path) for path, exists in zip(comparison_paths, existing_comparison) if exists)
+        )
+    else:
+        comparison_paths = write_comparison(run_id)
     for path in comparison_paths:
         print("Comparison:", path)
     return results

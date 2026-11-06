@@ -3,7 +3,9 @@ import pytest
 
 from src.evaluation.binary_metrics import (
     calculate_binary_metrics,
+    load_training_history,
     save_evaluation_artifacts,
+    save_training_history,
     select_threshold_for_sensitivity,
 )
 
@@ -30,6 +32,21 @@ def test_metrics_use_fixed_threshold_and_correct_class_mapping():
     assert metrics["sensitivity_recall"] == 1.0
     assert metrics["specificity"] == 1.0
     assert metrics["roc_auc"] == 1.0
+
+
+def test_training_history_round_trips(tmp_path):
+    history_path = tmp_path / "training_history.csv"
+    history = type(
+        "History",
+        (),
+        {"epoch": [0, 1], "history": {"loss": [0.8, 0.4], "val_loss": [0.7, 0.5]}},
+    )()
+
+    save_training_history(history, history_path)
+    restored = load_training_history(history_path)
+
+    assert restored.epoch == [0, 1]
+    assert restored.history == {"loss": [0.8, 0.4], "val_loss": [0.7, 0.5]}
 
 
 def test_evaluation_artifacts_use_validation_threshold_on_held_out_scores(tmp_path):

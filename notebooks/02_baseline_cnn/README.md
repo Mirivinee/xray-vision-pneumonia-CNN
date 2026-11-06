@@ -9,7 +9,9 @@ The three existing scratch-CNN experiments use 224×224 grayscale inputs, batch 
 - [03_baseline_cnn_augmentation.ipynb](./03_baseline_cnn_augmentation.ipynb): augments training batches only.
 - [00_imbalance_utilities.ipynb](./00_imbalance_utilities.ipynb): reusable class-weight, oversampling, and augmentation helpers.
 
-Validation and test remain unbalanced and unaugmented. The test set was not used for model selection. All notebooks now default to the canonical manifest-backed split and save checkpoints under `models/baseline/`.
+Validation remains unbalanced and unaugmented. Training notebooks do not load or evaluate the held-out test split. Each checkpoint is saved under a run-specific filename in `models/baseline/`; run histories and configurations are stored under `results/baseline_cnn/seed42_run01/`.
+
+After the three baselines and four transfer models are trained, the unified evaluator selects a preferred model and validation operating thresholds, then evaluates all seven configurations on test data.
 
 ## Recorded results
 

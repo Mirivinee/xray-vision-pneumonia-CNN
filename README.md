@@ -45,14 +45,14 @@ Select that Python environment as the Jupyter kernel. Run Jupyter from the repos
 5. After all seven models train, the transfer-learning notebook first selects operating points and the preferred model using validation data only, then evaluates all seven models on the held-out test split and creates the unified comparison outputs. To run that step separately, use `python src/evaluation/evaluate_experiments.py --run-id seed42_run01`.
 6. Execute `notebooks/04_explainability/04_gradcam_analysis.ipynb` after the four current-run transfer checkpoints exist. It reads validation images and writes figures under `results/gradcam/`.
 
-To preserve the original notebook outputs, execute notebooks into run-specific result folders (run commands from the repository root):
+To preserve the original notebook outputs, execute notebooks into run-specific result folders with the repository's `nbclient` runner (run commands from the repository root):
 
 ```powershell
-jupyter nbconvert --to notebook --execute notebooks/02_baseline_cnn/01_baseline_cnn_class_weighted.ipynb --output 01_baseline_cnn_class_weighted.ipynb --output-dir results/baseline_cnn/seed42_run01/notebooks
-jupyter nbconvert --to notebook --execute notebooks/02_baseline_cnn/02_baseline_cnn_oversampling.ipynb --output 02_baseline_cnn_oversampling.ipynb --output-dir results/baseline_cnn/seed42_run01/notebooks
-jupyter nbconvert --to notebook --execute notebooks/02_baseline_cnn/03_baseline_cnn_augmentation.ipynb --output 03_baseline_cnn_augmentation.ipynb --output-dir results/baseline_cnn/seed42_run01/notebooks
-jupyter nbconvert --to notebook --execute notebooks/03_transfer_learning/03_transfer_learning_comparison.ipynb --output 03_transfer_learning_comparison.ipynb --output-dir results/transfer_learning/seed42_run01/notebooks
-jupyter nbconvert --to notebook --execute notebooks/04_explainability/04_gradcam_analysis.ipynb --output 04_gradcam_analysis.ipynb --output-dir results/gradcam/seed42_run01/notebooks
+python -m src.run_notebook --input notebooks/02_baseline_cnn/01_baseline_cnn_class_weighted.ipynb --output results/baseline_cnn/seed42_run01/notebooks/01_baseline_cnn_class_weighted.ipynb
+python -m src.run_notebook --input notebooks/02_baseline_cnn/02_baseline_cnn_oversampling.ipynb --output results/baseline_cnn/seed42_run01/notebooks/02_baseline_cnn_oversampling.ipynb
+python -m src.run_notebook --input notebooks/02_baseline_cnn/03_baseline_cnn_augmentation.ipynb --output results/baseline_cnn/seed42_run01/notebooks/03_baseline_cnn_augmentation.ipynb
+python -m src.run_notebook --input notebooks/03_transfer_learning/03_transfer_learning_comparison.ipynb --output results/transfer_learning/seed42_run01/notebooks/03_transfer_learning_comparison.ipynb
+python -m src.run_notebook --input notebooks/04_explainability/04_gradcam_analysis.ipynb --output results/gradcam/seed42_run01/notebooks/04_gradcam_analysis.ipynb
 ```
 
 Run focused code tests with `python -m pytest tests -q`. Fresh comparison files are written to `results/metrics/` and `results/plots/`; the comparison script is invoked by the unified evaluator.
